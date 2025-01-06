@@ -175,7 +175,7 @@ out = softmax_triton(x)'''
         times_triton.append(triton_ms)
         tprint(f"triton took {triton_ms:.4f}")
 
-        for variant in range(3, 11):
+        for variant in range(3, 10):
             (dim_y, unroll), time = fine_tune_kernel(variant, variant > 6, x, pow, variant>4)
             times_cuda[variant].append(time)
             cuda = load(name='softmax_cuda', sources=["interface.cpp", "kernels.cu"], verbose=False, extra_cuda_cflags=[f"-lineinfo", "--use_fast_math", "-O3", f"-DSOFTMAX_VARIANT={variant}", f"-DBLOCK_DIM_Y={dim_y}", f"-DUNROLL_FACTOR={unroll}", f"-DWIDTH={2**pow}"], extra_cflags=[f"-DSOFTMAX_VARIANT={variant}", f"-DBLOCK_DIM_Y={dim_y}", f"-DUNROLL_FACTOR={unroll}", f"-DWIDTH={2**pow}"])
